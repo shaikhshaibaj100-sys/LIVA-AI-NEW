@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>LIVA AI </title>
+
+
+    <!--ai icon path assests/img/logo-->
+    <link rel="shortcut icon" href="assets/img/Ai_40670.ico" type="image /x-icon">
+
+    <!--bootsrap link -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+
+    <!-- particle js  -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"
+        type="text/javascript"></script>
+
+    <!-- Textillate -->
+    <link rel="stylesheet" href="assets/vendore/texllate/animate.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+   <div class="container">
+
+    <section id="oval" class="mb-4" >
+        <div class="row">
+        <div class="col-md-1"></div>
+
+        <div class="col-md-10">
+
+            <div class="d-flex justify-content-center align-items-center position-relative" style="height:80vh;">
+
+                <!-- Particle Canvas -->
+                <canvas id="canvasOne" width="700" height=520 style="position:absolute;"></canvas>
+
+
+                <!-- LIVA Center Shape -->
+                <div id="LIVAsHood">
+                    <div class="square">
+                        <span class="circle"></span>
+                        <span class="circle"></span>
+                        <span class="circle"></span>
+                    </div>
+                </div>
+
+            </div>
+
+            <h3 class="text-center text-light mt-3">!! LIVA !S READY !!</h3>
+            <h6 class="text-center text-light mt-3">ASK FOR ANYTH!NG...</h6>
+
+            <!-- INPUT AREA -->
+            <div class="col-md-12 mt-4 pt-3">
+                <div class="text-center">
+
+                    <div id="TextInput" class="d-flex justify-content-center gap-2">
+
+                        <input type="text" class="input-field" name="chatbox" id="chatbox" placeholder="type here...">
+                        <button id="MicBtn" class="glow-on-hover"><i class="bi bi-mic"></i></button>
+                        <button id="ChatBtn" class="glow-on-hover"><i class="bi bi-chat-dots"></i></button>
+                        <button id="SettingsBtn" class="glow-on-hover"><i class="bi bi-gear"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-1"></div>
+        </div>
+
+        </section>
+
+        <!-- ================= SIRI WAVE ================= -->
+        <section id="SiriWave" class="mb-4" hidden>
+
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="d-flex justify-content-center align-item-center" style="height:100vh;">
+                            <div class="">
+
+                                <p class="text-start text-light mb-4 siri-message">LISTENING.....</p>
+                                <div id="siri-container"></div>
+                                <div class="siri-center"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+    </div>
+
+    <!-- ================= SCRIPTS ================= -->
+
+    <!-- jQuery (ONLY ONE VERSION) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+
+    <!-- Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- particle js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery-ui.min.js"></script>
+
+
+    <!-- Siri Wave -->
+   <script src="https://unpkg.com/siriwave/dist/siriwave.umd.min.js"></script>
+
+    <!-- Textillate -->
+    <script src="assets/vendore/texllate/jquery.fittext.js"></script>
+    <script src="assets/vendore/texllate/jquery.lettering.js"></script>
+    <script src="https://jschr.github.io/textillate/jquery.textillate.js"></script>
+
+    <!-- Your Scripts -->
+    <script src="script.js"></script>
+    <script src="main.js"></script>
+
+    <!-- EEL Connection -->
+    <script type="text/javascript" src="/eel.js"></script>
+
+</body>
+
+</html>
