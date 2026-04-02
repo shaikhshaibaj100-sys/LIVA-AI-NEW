@@ -1,3 +1,4 @@
 
 
-AssistantName=" LIVA "
+AssistantName="LIVA"
+

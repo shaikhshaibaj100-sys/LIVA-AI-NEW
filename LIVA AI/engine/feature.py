@@ -1,11 +1,224 @@
-import playsound as playsound
-import os
-import eel
-import re
-from engine.config import AssistantName
-from engine.command import speak 
-import pywhatkit as kit
 
+import re
+import webbrowser
+import sqlite3
+import pywhatkit as kit
+import playsound
+import eel
+import os
+import subprocess
+import platform
+
+# expose means access the function in the js file
+@eel.expose
+def playAssistantSound():
+    """Play assistant sound effect"""
+    try:
+        music_dir = "D:\\LIVA AI\\www\\assets\\audio\\Windows Error.wav"
+        if os.path.exists(music_dir):
+            playsound.playsound(music_dir)
+        else:
+            print("Sound file not found")
+    except Exception as e:
+        print(f"Error playing sound: {e}")
+
+@eel.expose
+def opencommand(query):
+    
+    from engine.command import speak
+    """Open applications and websites based on voice command"""
+    
+    # -------------------- CLEAN QUERY --------------------
+    query = query.lower()
+    query = re.sub(r"\b(?:open|launch|start)\b", "", query).strip()
+
+    if not query:
+        speak("What should I open?")
+        return
+
+    
+    speak(query)
+
+    # -------------------- 1. LOCAL APPS --------------------
+    apps = {
+        "chrome": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+        "chrome": "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",  # 32-bit fallback
+        "vs code": "C:\\Users\\shaik\\OneDrive\\Desktop\\Microsoft VS Code\\Code.exe",
+        "vs code": "C:\\Users\\{user}\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe".format(user=os.getenv('USERNAME')),
+        "notepad": "notepad",
+        "calculator": "calc",
+        "cmd": "cmd",
+        "command prompt": "cmd",
+        "explorer": "explorer",
+        "file explorer": "explorer",
+        "settings": "ms-settings:",
+        "control panel": "control",
+        "task manager": "taskmgr",
+        "paint": "mspaint",
+        "armor creator": "C:\\Program Files\\Armor\\Creator.exe",
+        "whatsapp": "C:\\Users\\shaik\\OneDrive\\Desktop\\WhatsApp.lnk"
+    }
+
+    for app_name, app_path in apps.items():
+        if app_name in query:
+            try:
+                if os.path.exists(app_path) or app_path in ["notepad", "calc", "cmd", "explorer", "ms-settings:", "control", "taskmgr", "mspaint"]:
+                    if platform.system() == "Windows":
+                        os.startfile(app_path)
+                    else:
+                        subprocess.run([app_path])
+                    speak(app_name)
+                    return
+            except Exception as e:
+                speak("App not found, trying alternative method")
+                try:
+                    # Fallback to Windows Run command
+                    subprocess.run(['start', app_path], shell=True, check=True)
+                    return
+                except:
+                    speak("Could not open the application")
+                    print("ERROR:", e)
+                    return
+
+    # -------------------- 2. WEBSITES --------------------
+    websites = {
+        "youtube": "https://www.youtube.com",
+        "google": "https://www.google.com",
+        "github": "https://github.com",
+        "gmail": "https://mail.google.com",
+        "facebook": "https://facebook.com",
+        "instagram": "https://instagram.com",
+        "whatsapp web": "https://web.whatsapp.com",
+        "stackoverflow": "https://stackoverflow.com",
+        "linkedin": "https://linkedin.com",
+        "chatgpt":"https://chat.openai.com",
+        "gemini":"https://gemini.google.com"
+    }
+
+    for site in websites:
+        if site in query:
+            webbrowser.open(websites[site])
+            speak(site)
+            return
+
+    # -------------------- 3. FALLBACK - Google Search --------------------
+    speak(f"Searching for {query}")
+    webbrowser.open(f"https://www.google.com/search?q={query.replace(' ', '+')}")
+
+@eel.expose
+def Playyoutube(query):
+    
+    from engine.command import speak
+    """Play YouTube video based on query"""
+    query = re.sub(r"\b(?:play|on youtube)\b", "", query, flags=re.IGNORECASE).strip()
+
+    if not query:
+        speak("What should I play?")
+        return
+
+    eel.DisplayMessage(f"Liva: Playing {query} on YouTube")
+    speak(f"{query}")
+    
+    try:
+        kit.playonyt(query)
+    except Exception as e:
+        speak("Could not play on YouTube")
+        print(f"YouTube error: {e}")
+
+@eel.expose
+def googlesearch(query):
+    from engine.command import speak
+    """Perform Google search"""
+    query = re.sub(r"\b(?:search|on google)\b", "", query, flags=re.IGNORECASE).strip()
+
+    if not query:
+        speak("What should I search?")
+        return
+
+    eel.DisplayMessage(f"Liva: Searching {query} on Google")
+    speak(f"{query}")
+    
+    search_url = f"https://www.google.com/search?q={query.replace(' ', '+')}"
+    webbrowser.open(search_url)
+
+@eel.expose
+def youtubeplaymusic(query):
+    from engine.command import speak
+    """Play music on YouTube"""
+    eel.DisplayMessage("Liva: Playing music")
+    speak("Playing music")
+    
+    try:
+        # More specific music queries
+        music_queries = [
+            "latest hindi songs",
+            "top english songs",
+            "lofi music",
+            "relaxing music"
+        ]
+        import random
+        selected_query = random.choice(music_queries)
+        kit.playonyt(selected_query)
+        speak(f"Playing {selected_query}")
+    except Exception as e:
+        speak("Could not play music")
+        print(f"Music error: {e}")
+
+# Additional utility functions
+@eel.expose
+def get_system_info(query):
+    
+    """Get basic system information"""
+    import platform
+    system_info = {
+        "system": platform.system(),
+        "release": platform.release(),
+        "version": platform.version(),
+        "processor": platform.processor(),
+        "architecture": platform.architecture()
+    }
+    return system_info
+
+@eel.expose
+def shutdown_computer(query):  
+    """Shutdown computer (use with caution)"""
+    speak("Shutting down computer in 10 seconds")
+    subprocess.run(["shutdown", "/s", "/t", "10"])
+    
+def sleep_computer(query):
+    
+    """Put computer to sleep"""
+    speak("Putting computer to sleep")
+    if platform.system() == "Windows":
+        subprocess.run(["rundll32.exe", "powrprof.dll,SetSuspendState", "0,1,0"])
+    else:
+        speak("Sleep function not supported on this OS")    
+
+@eel.expose
+def open_folder(path=""):
+    """Open specific folder"""
+    if not path:
+        path = os.path.expanduser("~")  # Home directory
+    try:
+        os.startfile(path)
+    except:
+        subprocess.run(["explorer", path])
+
+
+
+
+
+
+
+'''import re
+import webbrowser
+import sqlite3
+import pywhatkit as kit
+import playsound
+from engine.command import speak
+import eel
+import os
+import webbrowser
 # expose means access the function in the js file
 @eel.expose
 def playAssistantSound ():
@@ -14,30 +227,105 @@ def playAssistantSound ():
     
     playsound.playsound(music_dir)
     
-def opencommand():
-    query = query.replace(AssistantName,"")
-    query = query.replace("open","")
-    query.lower()
     
-    if query!="":
-        speak("Opening..."+query)
-        os.system("start>>>"+query)
-      
-    else:
-        speak("application not found !!!") 
-        
-def Playyoutube():
-    search_term=extract_yt_search_term(query)#you can replace this with your own function to extract the search term from the query
-    speak("Playing "+search_term+" on youtube")#you can replace this with your own function to speak the response
-    kit.playonyt(search_term)               
-    
-    
-def extract_yt_search_term(query):
-    
-    pattern=r"play\s+(*?)\s+on\s+youtube"#you can replace this with your own regex pattern to extract the search term from the query
-    
-    match=re.search(pattern,command,re.IGNORECASE)#you can replace this with your own regex pattern to extract the search term from the query
-    return match.group(1) if match else None #you can replace this with your own logic to extract the search term from the query
+@eel.expose
+def opencommand(query):
 
-    
-        
+    import webbrowser
+    import os
+    import re
+
+    # -------------------- CLEAN QUERY --------------------
+    query = query.lower()
+    query = re.sub(r"\b(open|launch|start)\b", "", query).strip()
+
+    if not query:
+        speak("What should I open?")
+        return
+
+    eel.DisplayMessage(f"Liva: Opening {query}")
+    speak(f"Opening {query}")
+
+    # -------------------- 1. LOCAL APPS --------------------
+    apps = {
+        "chrome": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+        "vs code": "C:\\Users\\shaik\\OneDrive\\Desktop\\Microsoft VS Code\\Code.exe",
+        "notepad": "notepad",
+        "calculator": "calc",
+        "cmd": "cmd",
+        "explorer": "explorer",
+        "file explorer": "explorer",
+        "settings": "ms-settings:"
+    }
+
+    for app in apps:
+        if app in query:
+            try:
+                os.startfile(apps[app])
+                return
+            except Exception as e:
+                speak("App path not found")
+                print("ERROR:", e)
+                return
+
+    # -------------------- 2. WEBSITES --------------------
+    websites = {
+        "youtube": "https://www.youtube.com",
+        "google": "https://www.google.com",
+        "github": "https://github.com",
+        "gmail": "https://mail.google.com",
+        "facebook": "https://facebook.com",
+        "instagram": "https://instagram.com"
+    }
+
+   # ---------------- YOUTUBE PLAY ---------------- #
+@eel.expose
+def Playyoutube(query):
+
+    query = query.replace("play", "").replace("on youtube", "").strip()
+
+    if not query:
+        speak("What should I play?")
+        return
+
+    speak(f"Playing {query} on YouTube")
+    kit.playonyt(query)
+
+
+# ---------------- GOOGLE SEARCH ---------------- #
+@eel.expose
+def googlesearch(query):
+
+    query = query.replace("search", "").replace("on google", "").strip()
+
+    if not query:
+        speak("What should I search?")
+        return
+
+    speak(f"Searching {query} on Google")
+    webbrowser.open(f"https://www.google.com/search?q={query}")
+
+
+# ---------------- MUSIC ---------------- #
+@eel.expose
+def youtubeplaymusic(query):
+
+    speak("Playing music")
+    kit.playonyt("latest songs")
+'''
+
+
+
+
+
+
+
+   
+   
+   
+   
+   
+   
+   
+   
+   
