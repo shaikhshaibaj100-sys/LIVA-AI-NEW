@@ -1,3 +1,4 @@
+
 import eel
 import webbrowser
 import time
@@ -6,14 +7,11 @@ import os
 
 # ✅ Direct imports - NO __init__.py needed!
 from engine.command import speak, takeCommand, allcommands
-from engine.feature import (
-    playAssistantSound, opencommand, Playyoutube,
-    googlesearch, youtubeplaymusic
-)
+from engine.feature import opencommand, playAssistantSound,Playyoutube,createimage,chatbot,googlesearch,shutdown_computer,youtubeplaymusic,get_system_info,sleep_computer,open_folder
 
 print("🚀 Liva AI Assistant - Direct imports")
 
-eel.init('www') 
+eel.init('www') # Initialize Eel with the 'www' folder for frontend files
 
 # Startup
 try:
@@ -23,12 +21,9 @@ except:
     print("⚠️ No sound file")
 
 
-'''
-os.system("start http://localhost:8000/index.html")
 
 
-eel.start('index.html', mode=None,host='localhost',block=True)
-'''
+
 # Auto-open browser
 def open_browser():
     time.sleep(2)
@@ -40,6 +35,7 @@ threading.Thread(target=open_browser, daemon=True).start()
 #Start server
 print("🌐 http://localhost:8000")
 eel.start('index.html', size=(1200, 800), port=8000)
+
 
 
 

@@ -5,6 +5,8 @@ $(document).ready(function() {
     eel.expose(showHood);
     function showHood() {
         console.log("🏠 Main UI");
+        eel.DisplayMessage("Welcome back, sir!");
+        eel.speak("welcome back sir");
         $('#Oval').show().removeAttr('hidden');
         $('#SiriWave').hide().attr('hidden', true);
         if (typeof siriWave !== 'undefined' && siriWave.stop) siriWave.stop();  // ✅ Fixed
@@ -15,12 +17,16 @@ $(document).ready(function() {
     function showSiri() {
         console.log("👂 Siri UI");
         $('#Oval').hide().attr('hidden', true);
+        //$('#SiriWave').hide().attr('hidden',false);
         $('#SiriWave').show().removeAttr('hidden');
         $('.siri1').text('🎤 Listening...');
         $('.siri1').css('font-size', '24px').css('color', '#fff').css('font-weight', 'bold').css('text-shadow', '0 0 10px #fff');
         if (typeof siriWave !== 'undefined' && siriWave.start) siriWave.start();
     }
 
+    // Auto-focus chatbox
+    $('#chatbox').focus();
+});
     // 📱 Messages
     eel.expose(DisplayMessage);
     function DisplayMessage(text) {
@@ -56,6 +62,12 @@ $(document).ready(function() {
         if (siriWave && siriWave.stop) siriWave.stop();
     }
 
+    // send button handler
+        $('#sendBtn').click(function(e) {
+        e.preventDefault();
+        console.log("🎤 send button click")
+        startSiriWave();
+        });        
     // =================================================================
     // 🎛️ BUTTON HANDLERS - ALL FIXED! ✅
     // =================================================================
@@ -65,10 +77,39 @@ $(document).ready(function() {
         e.preventDefault();
         console.log("🎤 Mic clicked!");
         showSiri();
+        eel.DisplayMessage("welcome back sir!");
+        eel.speak("welcome back sir");
         eel.startAssistant();
     });
 
-    // 📱 MESSAGE BUTTON - FIXED SELECTOR
+    /*$('#sendBtn').click(function(e) {
+     e.preventDefault();
+    console.log("🎤 send button click");
+    showSiri();
+    if 
+
+        DisplayMessage("Please type something...")
+    else
+        DisplayMessage(`You: ${query}`); 
+   
+    eel.startAssistant();
+
+     });/*
+
+    $('#SendBtn').click(function(e) {  // ✅ Added SendBtn handler
+        e.preventDefault();
+        console.log("📱 Send button clicked!");
+        const userInput = $('#chatbox').val().trim();
+        if (userInput) {
+            DisplayMessage(`You: ${userInput}`); 
+            eel.handleCommand(userInput);  // Optionally trigger command processing
+           
+            $('#chatbox').val('');
+        } else {
+            DisplayMessage("Please type something...");
+        }   
+    });
+    /* 📱 MESSAGE BUTTON - FIXED SELECTOR
     $('#msg-btn').click(function(e) {  // ✅ $('#msg-btn') NOT $('msg-btn')
         e.preventDefault();
         console.log("📱 Message button!");
@@ -89,21 +130,23 @@ $(document).ready(function() {
         eel.setting();
         // Optional: Show settings panel
         // toggleSettingsPanel();
-    });
+    });*/
 
     // =================================================================
     // ⌨️ KEYBOARD SHORTCUTS
     // =================================================================
     $(document).keydown(function(e) {
-        if (e.keyCode === 32) { // Spacebar → Siri
+        if (e.keyCode === 16) { // Shift → Siri
             e.preventDefault();
             showSiri();
+
         }
         if (e.keyCode === 27) { // Escape → Home
             showHood();
         }
-        if (e.keyCode === 13 && e.ctrlKey) { // Ctrl+Enter → Send message
-            $('#msg-btn').click();
+        if (e.keyCode === 13 ) { // Ctrl+Enter → Send message
+            $('#SendBtn').click();
+            showSiri();
         }
     });
 
@@ -124,7 +167,7 @@ $(document).ready(function() {
     console.log("📱 #msg-btn → Text"); 
     console.log("⚙️ #SettingsBtn → Settings");
     console.log("⌨️ Space=Voice, Esc=Home, Ctrl+Enter=Send");
-});
+
 
 
 

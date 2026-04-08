@@ -1,3 +1,5 @@
+
+//this function runs perfectly
 $(document).ready(function() {
     console.log("🎤 Liva AI - Frontend Ready!");
 
@@ -73,6 +75,20 @@ $(document).ready(function() {
         e.preventDefault();
         toggleListening();
     });
+    $('#SendBtn').click(function(e) {  // Text input button
+        e.preventDefault();
+        const query = $('#chatbox').val().trim();
+        if (query) {
+            handleCommand(query.toLowerCase().trim());
+            return;
+        }
+
+        else {
+            DisplayMessage("Please type a command...");
+        }       
+        
+    });
+
 
     function toggleListening() {
         if (isListening) {
@@ -89,8 +105,9 @@ $(document).ready(function() {
         eel.playAssistantSound();
         
         // UI Switch - FIXED
-        $('#Oval').hide().attr('hidden', true);
-        $('#SiriWave').show().removeAttr('hidden');
+       
+        $('#Oval').hide().attr('hidden',true);
+       $('#SiriWave').show().removeAttr('hidden');
         
         // Wave animation
         if (siriWave) siriWave.start();
@@ -103,14 +120,26 @@ $(document).ready(function() {
         console.log("🛑 Listening stopped");
         isListening = false;
         
+
         // Stop wave
         if (siriWave) siriWave.stop();
         
         // UI Switch - FIXED
-        $('#SiriWave').hide().attr('hidden', true);
+
+        $('#SiriWave').hide().attr('hidden',true);
         $('#Oval').show().removeAttr('hidden');
+        stopListening();
+        speakeroff();
+        toggleListening();
+
         
         DisplayMessage("Click 🎤 to start");
+    }
+
+    function speakeroff() {
+        console.log("🛑 Speaking stopped"); 
+            if (siriWave) siriWave.stop();
+
     }
 
     // =================================================================
@@ -154,44 +183,86 @@ $(document).ready(function() {
         
         // 🎯 Command Router
         if (query.includes("open") || query.includes("launch")) {
+            eel.speak("Opening...");
             DisplayMessage("🚀 Opening...");
             eel.opencommand(query);
         }
         else if (query.includes("play") || query.includes("youtube")) {
+            eel.speak("Playing...");
             DisplayMessage("🎵 Playing...");
             eel.Playyoutube(query);
         }
         else if (query.includes("search") || query.includes("google")) {
+            eel.speak("Searching...");      
             DisplayMessage("🔍 Searching...");
             eel.googlesearch(query);
         }
+        else if (query.includes("create image") || query.includes("generate image")) {
+            eel.speak("Creating image...");
+            DisplayMessage("🖼️ Creating image...");
+            eel.googlesearch(query);
+        }
         else if (query.includes("music") || query.includes("song")) {
+            eel.speak("Playing music...");
+
             DisplayMessage("🎶 Playing music...");
             eel.youtubeplaymusic(query);
         }
+        else if (query.includes("what")|| query.includes("who") || query.includes("when") || query.includes("where") || query.includes("why") || query.includes("how")) {
+            eel.speak("Let me find that out...");
+            DisplayMessage("🔎 Let me find that out...");
+            eel.googlesearch(query)();
+        }
+        else if (query.includes("how are you")) {
+            eel.speak("I'm doing well. How can I help you?");
+            DisplayMessage(`🤔 ${response}`);
+            eel.chatbot(query)();
+        }
+        else if (query.includes("who are you") || query.includes(" your name")) {
+            eel.speak("I'm Liva, your AI assistant!");
+            DisplayMessage("👤 I'm Liva, your AI assistant!");
+            eel.chatbot(query)();
+        }
+       
         else if (query.includes("time") || query.includes("clock")) {
-            const now = new Date().toLocaleTimeString();
-            speak(`The time is ${now}`);
-            DisplayMessage(`⏰ ${now}`);
+            let now = new Date();
+
+           let hours = now.getHours();       // 0–23
+           let minutes = now.getMinutes();   // 0–59
+           let seconds = now.getSeconds();   // 0–59
+
+        console.log(hours + ":" + minutes + ":" + seconds);
+            eel.speak("The current time is " + hours + ":" + minutes);
+            DisplayMessage(`⏰ ${hours}:${minutes}`);
+            eel.chatbot(query);
         }
+
         else if (query.includes("date")) {
-            const today = new Date().toLocaleDateString();
-            speak(`Today is ${today}`);
-            DisplayMessage(`📅 ${today}`);
+            let day = now.getDate();      // Day of month
+            let month = now.getMonth();   // 0–11 (0 = January)
+            let year = now.getFullYear();
+
+        console.log(day + "/" + (month + 1) + "/" + year);
+            eel.speak("Today's date is " + day + "/" + (month + 1) + "/" + year);
+            DisplayMessage(`📅 ${day}/${month + 1}/${year }`);
+            eel.chatbot(query);
         }
+        
         else if (query.includes("stop") || query.includes("exit") || query.includes("quit")) {
+            eel.speak("Goodbye!");
             DisplayMessage("👋 Goodbye!");
             setTimeout(stopListening, 1000);
+            eel.chatbot(query);
             return;
         }
         else if (query.includes("clear") || query.includes("history")) {
             messageHistory = [];
             DisplayMessage("🗑️ History cleared!");
+            eel.chatbot(query);
             return;
         }
         else {
-            eel.speak("Sorry, I didn't understand. Try 'open chrome', 'play music', or 'what time?'");
-            DisplayMessage("❓ Try: open, play, search, time, date");
+            eel.speak("Sorry, I didn't understand that. ");
         }
         
         // Continue listening loop
@@ -236,15 +307,18 @@ $(document).ready(function() {
     // ⌨️ KEYBOARD SHORTCUTS
     // =================================================================
     $(document).keydown(function(e) {
-        if (e.keyCode === 32) { // Spacebar → Toggle voice
+        if (e.keyCode === 16) { // Shift → Toggle voice
             e.preventDefault();
             toggleListening();
         }
         if (e.keyCode === 27) { // Escape → Stop
             stopListening();
+            showHood();
         }
-        if (e.keyCode === 13 && e.ctrlKey) { // Ctrl+Enter → Send text
-            $('#msg-btn').click();
+        if (e.keyCode === 13 ) { // Ctrl+Enter → Send text
+            $('#sendBtn').click();
+            showSiri();
+            handleCommand($('#chatbox').val().trim().toLowerCase());
         }
     });
 

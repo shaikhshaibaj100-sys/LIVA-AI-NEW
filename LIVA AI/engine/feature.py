@@ -1,5 +1,6 @@
 
 import re
+from time import strftime
 import webbrowser
 import sqlite3
 import pywhatkit as kit
@@ -9,12 +10,13 @@ import os
 import subprocess
 import platform
 
+
 # expose means access the function in the js file
 @eel.expose
 def playAssistantSound():
     """Play assistant sound effect"""
     try:
-        music_dir = "D:\\LIVA AI\\www\\assets\\audio\\Windows Error.wav"
+        music_dir = r"C:\LIVA AI\LIVA AI\www\assets\audio\chimes.wav"
         if os.path.exists(music_dir):
             playsound.playsound(music_dir)
         else:
@@ -30,7 +32,7 @@ def opencommand(query):
     
     # -------------------- CLEAN QUERY --------------------
     query = query.lower()
-    query = re.sub(r"\b(?:open|launch|start)\b", "", query).strip()
+    query = re.sub(r"\b(?:open|launch|start|)\b", "", query).strip()
 
     if not query:
         speak("What should I open?")
@@ -43,20 +45,20 @@ def opencommand(query):
     apps = {
         "chrome": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
         "chrome": "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",  # 32-bit fallback
-        "vs code": "C:\\Users\\shaik\\OneDrive\\Desktop\\Microsoft VS Code\\Code.exe",
-        "vs code": "C:\\Users\\{user}\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe".format(user=os.getenv('USERNAME')),
+        "vs code": "C:\\Users\\{user}\\OneDrive\\Desktop\\Microsoft VS Code\\Code.exe".format(user=os.getenv('USERNAME')),
         "notepad": "notepad",
         "calculator": "calc",
         "cmd": "cmd",
         "command prompt": "cmd",
         "explorer": "explorer",
-        "file explorer": "explorer",
+        "file ": "explorer",
         "settings": "ms-settings:",
         "control panel": "control",
         "task manager": "taskmgr",
         "paint": "mspaint",
-        "armor creator": "C:\\Program Files\\Armor\\Creator.exe",
-        "whatsapp": "C:\\Users\\shaik\\OneDrive\\Desktop\\WhatsApp.lnk"
+        "whatsapp": "C:\\Users\\{user}\\OneDrive\\Desktop\\WhatsApp.lnk".format(user=os.getenv('USERNAME')),
+        "android studio": "C:\\Users\\{user}\\OneDrive\\Desktop\\Android Studio.lnk".format(user=os.getenv('USERNAME')) ,
+        
     }
 
     for app_name, app_path in apps.items():
@@ -98,7 +100,7 @@ def opencommand(query):
     for site in websites:
         if site in query:
             webbrowser.open(websites[site])
-            speak(site)
+            speak(f"Open {site}")
             return
 
     # -------------------- 3. FALLBACK - Google Search --------------------
@@ -122,8 +124,56 @@ def Playyoutube(query):
     try:
         kit.playonyt(query)
     except Exception as e:
+        
+        
         speak("Could not play on YouTube")
         print(f"YouTube error: {e}")
+
+@eel.expose
+def createimage(query):
+    from engine.command import speak
+    """Create image using DALL·E"""
+    query = re.sub(r"\b(?:create|generate|make)\b", "", query, flags=re.IGNORECASE).strip()
+ 
+    if not query:
+        speak("What image should I create?")
+        return
+
+    eel.DisplayMessage(f"Liva: Creating image of {query}")
+    speak(f"Creating image of {query}")
+    
+    # Placeholder for DALL·E API integration
+    # In a real implementation, you would call the DALL·E API here and display the generated image
+    print(f"Image creation requested for: {query}")
+    
+@eel.expose
+def chatbot(query):
+    from engine.command import speak
+    """Chat with AI chatbot"""
+    query = query.strip()
+
+    if "hii" in query or "hello" in query or "hey" in query:
+        speak("Hello! How can I assist you today?")
+        return "hello how can i help you"
+    
+    elif "how are you" in query:
+        speak("I'm doing well, thank you! How can I help you today?")
+        return"i am doing well how can i help you"
+    
+    elif "what is your name" in query or "who are you" in query:
+        #speak("I am Liva, your personal AI assistant. How can I help you today?")
+        return" i am liva your personal ai assistant how can i help you"
+    
+    elif "today date" in query or "time " in query:
+    
+        date_str = strftime("%B %d, %Y")
+        time_str = strftime("%I:%M %p")
+        speak(f"Today's date is {date_str} and the current time is {time_str}.")
+        return f"Today's date is {date_str} and the current time is {time_str}."
+    
+    else:
+        speak("I'm not sure how to respond to that. Can you please speak more clearly?")
+        return "I'm not sure how to respond to that. Can you please speak more clearly?"
 
 @eel.expose
 def googlesearch(query):
@@ -180,13 +230,14 @@ def get_system_info(query):
     return system_info
 
 @eel.expose
-def shutdown_computer(query):  
+def shutdown_computer(query): 
+    from engine.command import speak
     """Shutdown computer (use with caution)"""
     speak("Shutting down computer in 10 seconds")
     subprocess.run(["shutdown", "/s", "/t", "10"])
     
 def sleep_computer(query):
-    
+    from engine.command import speak
     """Put computer to sleep"""
     speak("Putting computer to sleep")
     if platform.system() == "Windows":
@@ -196,6 +247,7 @@ def sleep_computer(query):
 
 @eel.expose
 def open_folder(path=""):
+    from engine.command import speak 
     """Open specific folder"""
     if not path:
         path = os.path.expanduser("~")  # Home directory
