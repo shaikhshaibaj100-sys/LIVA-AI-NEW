@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image Generator</title>
+    <script type="text/javascript" src="/eel.js"></script>
+    <style>
+        .image-container {
+            max-width: 600px;
+            margin: 20px auto;
+            text-align: center;
+            padding: 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background: #f9f9f9;
+        }
+        .generated-image {
+            max-width: 100%;
+            max-height: 500px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .download-btn {
+            background: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 15px;
+            transition: background 0.3s;
+        }
+        .download-btn:hover {
+            background: #0056b3;
+        }
+        .prompt-display {
+            background: #e9ecef;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div id="imageDisplay" class="image-container" style="display: none;">
+        <div class="prompt-display" id="imagePrompt"></div>
+        <img id="generatedImage" class="generated-image" alt="Generated Image">
+        <br>
+        <button id="downloadBtn" class="download-btn">📥 Download Image</button>
+    </div>
+
+    <script type="text/javascript">
+        eel.showGeneratedImage()(function(imageDataUrl, filename, prompt) {
+            document.getElementById('imagePrompt').textContent = `Prompt: "${prompt}"`;
+            document.getElementById('generatedImage').src = imageDataUrl;
+            document.getElementById('downloadBtn').onclick = function() {
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = imageDataUrl;
+                link.click();
+            };
+            document.getElementById('imageDisplay').style.display = 'block';
+        });
+    </script>
+</body>
+</html>

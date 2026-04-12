@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>LIVA Image Viewer</title>
+    <style>
+        body {
+            background: #0f0f0f;
+            color: white;
+            text-align: center;
+            font-family: Arial;
+        }
+        img {
+            width: 400px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            margin-top: 15px;
+            border: none;
+            background: #00ffcc;
+            color: black;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>🎨 Generated Image</h2>
+
+    <img id="generatedImg" />
+    <p id="promptText"></p>
+
+    <br>
+    <a id="downloadBtn" download="liva_image.png">
+        <button>⬇ Download Image</button>
+    </a>
+
+    <script>
+        // 🧠 Load image from localStorage
+        const img = localStorage.getItem("generatedImage");
+        const prompt = localStorage.getItem("imagePrompt");
+
+        document.getElementById("generatedImg").src = img;
+        document.getElementById("promptText").innerText = prompt;
+
+        // 📥 Download setup
+        document.getElementById("downloadBtn").href = img;
+    </script>
+
+</body>
+</html>

@@ -7,7 +7,7 @@ import os
 
 # ✅ Direct imports - NO __init__.py needed!
 from engine.command import speak, takeCommand, allcommands
-from engine.feature import opencommand, playAssistantSound,Playyoutube,createimage,chatbot,googlesearch,shutdown_computer,youtubeplaymusic,get_system_info,sleep_computer,open_folder
+from engine.feature import opencommand, playAssistantSound,Playyoutube,createimage,chatbot,googlesearch,youtubeplaymusic,get_system_info,sleep_computer,open_folder
 
 print("🚀 Liva AI Assistant - Direct imports")
 
@@ -37,28 +37,3 @@ print("🌐 http://localhost:8000")
 eel.start('index.html', size=(1200, 800), port=8000)
 
 
-
-
-
-
-
-
-
-'''import os #to run the web app in the default browser
-import eel #connect the backend to the frontend
-
-from engine.feature import * #to play the assistant sound when the program starts, you can replace it with your own sound file and path
-from engine.command import * #to take command from the user and speak the response, you can replace it with your own functions and logic
-
-
-eel.init('www')
-
-playAssistantSound()
-
-os.system("start http://localhost:8000/index.html")
-
-
-eel.start('index.html', mode=None,host='localhost',block=True)'''
-      
-
-  
